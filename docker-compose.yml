@@ -183,7 +183,7 @@ services:
 
   backend:
     image: futureagi/future-agi:${FUTURE_AGI_VERSION:-latest}
-    mem_limit: "${BACKEND_MEMORY:-2G}"
+    mem_limit: "${BACKEND_MEMORY:-4G}"
     ports:
       - "${BACKEND_PORT:-8000}:80"
     env_file:
@@ -217,7 +217,7 @@ services:
 
   worker:
     image: futureagi/future-agi:${FUTURE_AGI_VERSION:-latest}
-    mem_limit: "${WORKER_MEMORY:-2G}"
+    mem_limit: "${WORKER_MEMORY:-3G}"
     env_file:
       - path: .env
         required: false
@@ -429,7 +429,7 @@ services:
 
   postgres:
     image: postgres:16
-    mem_limit: "${PG_MEMORY:-1G}"
+    mem_limit: "${PG_MEMORY:-2G}"
     # wal_level=logical + slots enable PeerDB CDC replication.
     command: >
       postgres
