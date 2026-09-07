@@ -452,6 +452,13 @@ services:
     # CH 24.x volume) to v2 the first time it boots — so an existing
     # volume does not strictly require `docker compose down -v`.
     image: clickhouse/clickhouse-server:25.3-alpine
+    # Without a limit ClickHouse derives max_server_memory_usage from
+    # max_server_memory_usage_to_ram_ratio (0.9) against the *host* — on an
+    # 8 GB Docker VM it budgets 6.87 GiB for itself and the other 17
+    # always-on containers contend for the rest. It reads the cgroup limit,
+    # so capping here bounds that budget (4G -> 3.60 GiB).
+    cpus: "${CH_CPUS:-2.0}"
+    mem_limit: "${CH_MEMORY:-4G}"
     environment:
       # The 25.3-alpine image ships a default-user.xml that restricts
       # the `default` user to 127.0.0.1 / ::1 only. Backend connects
@@ -482,6 +489,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "${CH_CPUS:-2.0}"
+          memory: "${CH_MEMORY:-4G}"
     restart: unless-stopped
 
   # ------------------------------------------------------------------------
